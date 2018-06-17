@@ -1,9 +1,13 @@
 let url = {
     hotLists: '/index/hotLists',
-    banner: '/index/banner'
+    banner: '/index/banner',
+    topList: '/category/topList',
+    subList: '/category/subList',
+    rank: '/category/rank'
+    
 }
 
-let host = 'http://rap.taobao.org/mockjsdata/34924'
+let host = 'http://rapapi.org/mockjsdata/24170'
 
 for (let key in url) {
     if (url.hasOwnProperty(key)) {

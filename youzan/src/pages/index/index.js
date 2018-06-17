@@ -16,7 +16,7 @@ let app = new Vue ({
   data:{
     hotLists: null,
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 6,
     loading: false,
     allLoaded: false,
     bannerList: null
@@ -32,7 +32,7 @@ let app = new Vue ({
     getHotLists(){
       if(this.allLoaded)return
       this.loading = true        // 正在发送请求时锁定请求
-      axios.post(url.hotLists,{
+      axios.get(url.hotLists,{
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }).then( res => {
@@ -52,8 +52,8 @@ let app = new Vue ({
       })
     },
     getBanner(){
-      axios.get(url.banner).then( res => {
-          this.bannerList = res.data.list
+      axios.post(url.banner).then( res => {
+          this.bannerList = res.data.lists
       })
     }
   }  

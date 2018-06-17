@@ -1,14 +1,14 @@
 <template>
     <div class="bottom-nav">
         <ul>
-            <li class="active">
+            <li >
                 <a href="index.html">
                     <i class="icon-home"></i>
                     <div>有赞</div>
                 </a>
             </li>
-            <li>
-                <a href="https://maijia.youzan.com/mars/category">
+            <li class="active">
+                <a href="category.html">
                     <i class="icon-category"></i>
                     <div>分类</div>
                 </a>
@@ -31,9 +31,7 @@
 
 
 <script>
-export default {
-  name: "Foot"
-};
+export default {}
 </script>
 
 <style>
