@@ -1,37 +1,51 @@
 <template>
     <div class="bottom-nav">
         <ul>
-            <li >
-                <a href="index.html">
-                    <i class="icon-home"></i>
-                    <div>有赞</div>
-                </a>
-            </li>
-            <li class="active">
-                <a href="category.html">
-                    <i class="icon-category"></i>
-                    <div>分类</div>
-                </a>
-            </li>
-            <li>
-                <a href="https://h5.youzan.com/v2/trade/cart?f_platform=yzapp&amp;source=yzapp">
-                    <i class="icon-cart"></i>
-                    <div>购物车</div>
-                </a>
-            </li>
-            <li>
-                <a href="https://h5.youzan.com/v2/buyer/member">
-                    <i class="icon-user"></i>
-                    <div>我</div>
-                </a>
-            </li>
+            <li :class="{active:curIndex == index}" v-for="(page,index) in navConfig" @click="changeNav(index,page)"><a><i :class="page.icon"></i><div>{{page.name}}</div></a></li>
         </ul>
     </div>
 </template>
 
 
 <script>
-export default {}
+  import qs from 'qs'
+
+  let index = qs.parse(location.search.substr(1)).index //qs模块可将url解析成对象形式
+  let navConfig = [
+    {
+      href:'index.html',
+      icon: 'icon-home',
+      name:'有赞'
+    },
+    {
+      href: 'category.html',
+      icon: 'icon-category',
+      name: '分类'
+    },
+    {
+      href: 'cart.html',
+      icon: 'icon-cart',
+      name: '购物车'
+    },
+    {
+      href: 'member.html',
+      icon: 'icon-user',
+      name: '我'
+    }        
+ ]
+export default {
+  data(){
+    return {
+      navConfig,
+      curIndex: parseInt(index) || 0,
+    }
+  },
+  methods:{
+    changeNav(index,page){
+      location.href = `${page.href}?index=${index}` //url跳转至index指向页面，并带上index参数
+    }
+  }
+}
 </script>
 
 <style>
