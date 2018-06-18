@@ -4,10 +4,10 @@ let url = {
     topList: '/category/topList',
     subList: '/category/subList',
     rank: '/category/rank',
-    sesrch: ' /search/list',
-    goodsList: ' /goods/deal',
-    goodsDtl: ' /goods/details',
-    
+    search: '/search/list',
+    goodsList: '/goods/deal',
+    goodsDtl: '/goods/details',
+
     
 }
 
