@@ -5,8 +5,9 @@ let url = {
     subList: '/category/subList',
     rank: '/category/rank',
     search: '/search/list',
-    goodsList: '/goods/deal',
-    goodsDtl: '/goods/details',
+    deal: '/goods/deal',
+    details: '/goods/details',
+    addCart: '/cart/add'
 
     
 }

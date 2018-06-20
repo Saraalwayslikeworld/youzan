@@ -64,9 +64,9 @@
             v-infinite-scroll="getHotLists"
             infinite-scroll-disabled="loading"
             infinite-scroll-distance="10"> 
-            <li v-for="list in hotLists">
+            <li v-for="list in hotLists" :key="list.id">
               <div class="goods-item">
-                <a href="https://h5.youzan.com/v2/showcase/goods?alias=2fwig6rnqfq6m&amp;source=yzapp&amp;f_platform=yzapp">
+                <a v-bind:href="'goods.html?id='+list.id">
                   <div class="thumb img-box">
                     <img class="fadeIn" v-bind:src="list.img">
                   </div>
