@@ -4,8 +4,9 @@ import './cart.css'
 
 import Vue from 'vue'
 import mixin from 'js/mixin.js'
-import axios from 'axios'
-import url from 'js/api.js'
+import Cart from 'js/cartService.js'
+
+import Velocity from 'velocity-animate'
 
 new Vue({
     el:'.container',
@@ -90,7 +91,7 @@ new Vue({
     },
     methods:{
         getList(){
-            axios.post(url.cartList).then(res => {
+            Cart.list().then(res => {
                 let lists = res.data.cartList
                 lists.forEach( shop =>{
                     shop.checked = false
@@ -142,21 +143,25 @@ new Vue({
             }
         },
         addGood(good){
-            axios.post(url.cartAdd,{
-                id:good.id,
-                number: 1
-            }).then(res => {
+            Cart.add(good.id).then( res => {
                 good.number++
             })
         },
         reduceGood(good){
             if(good.number===1)return
-            axios.post(url.cartReduce,{
-                id:good.id,
-                number: -1
-            }).then(res => {
+            Cart.reduce(good.id).then( res => {
                 good.number--
             })
+        },
+        updateGood(good,val){
+            var isNum = /^\d{1,}$/
+            if(isNum.test(val) && Number(val)!==0){
+                Cart.update(good.id,val).then( res => {
+                    good.number = val
+                })
+            }else{
+                return
+            }
         },
         removegood(shop,shopIndex,good,goodIndex){
             this.removePopup = true
@@ -168,11 +173,9 @@ new Vue({
             this.removeMsg = `确定要将所选的${this.removeList.length}个商品删除吗？`
         },
         removeConfirm(){
-            if(this.removeList.length===1){
+            if(this.removeData){
                 let {shop,shopIndex,good,goodIndex} = this.removeData
-                axios.post(url.cartRemove,{
-                    id: good.id
-                }).then(res=>{
+                Cart.remove(good.id).then(res=>{
                     shop.goodsList.splice(goodIndex,1)
                     if(!shop.goodsList.length){
                         this.lists.splice(shopIndex,1)
@@ -180,8 +183,7 @@ new Vue({
                     }
                 })
             }else{
-                let ids = this.removeList.map(good=>good.id)
-                axios.post(url.cartMremove,{ids}).then(res=>{
+                Cart.removeM(this.removeList).then(res=>{
                     if(this.removeList.length===this.editingShop.goodsList.length){
                         this.lists.splice(this.editingShopIndex,1)
                         this.removeShop()
@@ -199,6 +201,23 @@ new Vue({
             this.lists.forEach(shop=>{
                 shop.editing = false
                 shop.editingMsg = '编辑'
+            })
+        },
+        start(e,good){
+            good.startX = e.changedTouches[0].clientX
+        },
+        end(e,shopIndex,good,goodIndex){
+            let endX = e.changedTouches[0].clientX 
+            let dstX =  good.startX - endX
+            let left = '0' 
+            if(dstX>100){
+                left = '-60px'
+            }
+            if(-dstX>100){
+                left = '0px'
+            }
+            Velocity(this.$refs[`goods-${shopIndex}-${goodIndex}`],{
+                left
             })
         }
     },

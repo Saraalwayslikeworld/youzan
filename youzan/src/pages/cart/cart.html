@@ -27,7 +27,7 @@
       <div id="cart-container">
         <div>
           <div class="js-shop-list shop-list">
-            <div class="block block-order block-cart" v-for="(shop,shopIndex) in lists">
+            <div class="block block-order block-cart" v-for="(shop,shopIndex) in lists" :key="shop.shopId">
               <div class="header">
                 <div class="select-group js-select-group" @click="selectShop(shop)">
                   <span class="check" :class="{checked:shop.checked}" v-show="!editingShop"></span>
@@ -43,8 +43,11 @@
               <div>
                 <ul class="js-list block block-list block-list-cart border-0">
                   <li class="block-item block-item-cart" 
-                    v-for="(good,goodIndex) in shop.goodsList" 
-                    :class="{editing:shop.editing}">
+                    v-for="(good,goodIndex) in shop.goodsList" :key="good.id"
+                    :class="{editing:shop.editing}"
+                    :ref="'goods-'+shopIndex+'-'+goodIndex"
+                    @touchstart="start($event,good)"
+                    @touchend="end($event,shopIndex,good,goodIndex)">
                     <div>
                       <div class="check-container" @click="selectGood(shop,good)">
                         <span class="check" :class="{checked:good.checked}" v-show="!editingShop"></span>
@@ -71,8 +74,8 @@
                             <!---->
                             <div class="quantity">
                               <button type="button" class="minus" :class="{disabled:good.number===1}"></button>
-                              <input type="text" pattern="[0-9]*" class="txt" v-model="good.number">
-                              <button type="button" class="plus " ></button>
+                              <input type="text"  class="txt" :value="good.number" @input="updateGood(good,$event.target.value)">
+                              <button type="button" class="plus"></button>
                               <div class="response-area response-area-minus" @click="reduceGood(good)"></div>
                               <div class="response-area response-area-plus" @click="addGood(good)"></div>
                             </div>
@@ -153,7 +156,7 @@
       </div>
     </div>
     <div  v-show="removePopup" style="height: 100%; position: fixed; top: 0px; left: 0px; right: 0px; background-color: rgba(0, 0, 0, 0.7); z-index: 1000;  opacity: 1;"></div>
-    <div  v-show="removePopup" class="popout-confirm popout-box" style="overflow: hidden; position: absolute; z-index: 1000; top: 50%; left: 50%; transform: translate3d(-50%, -50%, 0px); visibility: visible; border-radius: 4px; background: white; width: 270px; padding: 15px; opacity: 1;">
+    <div  v-show="removePopup" class="popout-confirm popout-box" style="overflow: hidden; position: fixed; z-index: 1000; top: 50%; left: 50%; transform: translate3d(-50%, -50%, 0px); visibility: visible; border-radius: 4px; background: white; width: 270px; padding: 15px; opacity: 1; width:200px">
       <div class="confirm-content font-size-14" style="line-height: 20px; padding: 5px 5px 10px;">
           {{removeMsg}}
       </div>
