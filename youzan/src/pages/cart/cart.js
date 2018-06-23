@@ -196,7 +196,7 @@ new Vue({
             this.removePopup = false
         },
         removeShop(){
-            this.editing = null
+            this.editingShop = null
             this.editingShopIndex = -1
             this.lists.forEach(shop=>{
                 shop.editing = false
