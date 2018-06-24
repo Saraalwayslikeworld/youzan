@@ -20,7 +20,7 @@ let url = {
     addressSetDefault: '/address/setDefault'  
 }
 
-let host = 'http://rapapi.org/mockjsdata/24170'
+let host = '//rapapi.org/mockjsdata/24170'
 
 for (let key in url) {
     if (url.hasOwnProperty(key)) {
