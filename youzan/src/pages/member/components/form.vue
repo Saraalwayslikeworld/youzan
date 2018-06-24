@@ -16,15 +16,15 @@
           <div class="select-group">
             <select class="js-province-selector" v-model="provinceValue">
               <option value="-1">选择省份</option>
-              <option :value="p.value" v-for="p in addressData.list">{{p.label}}</option> 
+              <option :value="p.value" v-for="p in addressData.list" :key="p.value">{{p.label}}</option> 
             </select>
             <select class="js-city-selector" v-model="cityValue">
               <option value="-1">选择城市</option>
-              <option :value="c.value" v-for="c in cityList">{{c.label}}</option>
+              <option :value="c.value" v-for="c in cityList" :key="c.value">{{c.label}}</option>
             </select>
             <select class="js-county-selector" name="area_code" data-code="" v-model="districtValue">
               <option value="-1">选择地区</option>
-              <option :value="d.value" v-for="d in districtList">{{d.label}}</option>
+              <option :value="d.value" v-for="d in districtList" :key="d.value">{{d.label}}</option>
             </select>
           </div>
         </div>
@@ -59,8 +59,11 @@
         name:'',
         tel:'',
         provinceValue:-1,
+        provinceName:'',
         cityValue: -1,
+        cityName:'',
         districtValue: -1,
+        districtName:'',
         address: '',
         id: '',
         type: this.$route.query.type,
@@ -86,7 +89,7 @@
       msgRule(){
         let name = /^[\u4e00-\u9fa5,\w]{3,12}$/g;
         let tel  = /^1[3578]\d{9}$/;
-        let address = /^[\u4e00-\u9fa5]{1,}$/g;
+        let address = /^[\u4e00-\u9fa5,\d,\w]{1,}$/g;
         this.isError = true
         if(!name.test(this.name)){
           this.errMsg = '用户名为3-5个字符'
@@ -104,58 +107,69 @@
       add(){
         this.msgRule()
         if(this.isError)return
-        let {name,tel,provinceValue,cityValue,districtValue,address} = this
-        let data = {name,tel,provinceValue,cityValue,districtValue,address}
+        let {name,tel,provinceValue,cityValue,districtValue,provinceName,cityName,districtName,address} = this
+        let data = {name,tel,provinceValue,cityValue,districtValue,provinceName,cityName,districtName,address}
         if(this.type==='add'){
-          Address.add(data).then(res=>{
-            this.$router.go(-1)
-          })
+          this.$store.dispatch('addAction',data)
         }
         if(this.type==='edit'){
           data.id = this.id
-          Address.update(data).then(res=>{
-            this.$router.go(-1)
-          })
+          this.$store.dispatch('updateAction',data)
         }
       },
       remove(){
         if(window.confirm('确认删除？')){
-          Address.remove(this.id).then(res=>{
-            this.$router.go(-1)
-          })
+          this.$store.dispatch('removeAction',this.id)
         }
       },
       setDefault(){
-        Address.setDefault(this.id).then(res=>{
-            this.$router.go(-1)
-        })
+        this.$store.dispatch('setDefaultAction',this.id)
+      }
+    },
+    computed:{
+      lists(){
+        return this.$store.state.lists
       }
     },
     watch:{
+      lists:{
+        handler(){
+          this.$router.go(-1)
+        },
+        deep: true
+      },
       provinceValue(val){
         if(val==-1)return
         let list = this.addressData.list
         let index = list.findIndex(item=>{
           return item.value === val
         })
+        this.provinceName = list[index].label
         this.cityList = list[index].children 
         this.cityValue = -1
+        this.districtValue = -1   
         if(this.type=='edit'){
-          this.cityValue = parseInt(this.instance.cityValue)
+          this.cityValue = (this.instance.cityValue)
         }
-        this.districtValue = -1
-
       },
       cityValue(val){
-        if(val==-1)return
+        // if(val==-1)return
         let index = this.cityList.findIndex(item=>{
           return item.value == val
         })
-        this.districtList = this.cityList[index].children 
-        this.districtValue = -1
+        this.cityName = this.cityList[index].label
+        this.districtList = this.cityList[index].children
+        this.districtValue = -1 
         if(this.type=='edit'){
-        this.districtValue = parseInt(this.instance.districtValue)
+        this.districtValue = (this.instance.districtValue)
         }
+      },
+      districtValue(val){
+        // if(val==-1)return
+        let index = this.districtList.findIndex(item=>{
+          return item.value == val
+        })
+        this.districtName = this.districtList[index].label
       }
     }
   }

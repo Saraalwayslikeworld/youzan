@@ -29,7 +29,8 @@ new Vue({
         skuShow: false,
         skuNum: 1,
         isAddCart: false,
-        showAddMessage: false
+        showAddMessage: false,
+        loading: false
     },
     computed:{
         bannerList(){
@@ -45,8 +46,31 @@ new Vue({
     },
     created(){
         this.getDetails()
+        this.getHotLists()
     },
     methods:{
+        getHotLists(){
+            if(this.allLoaded)return
+            this.loading = true        // 正在发送请求时锁定请求
+            axios.get(url.hotLists,{
+              pageNum: this.pageNum,
+              pageSize: this.pageSize
+            }).then( res => {
+                let curLists = res.data.lists
+                // 判断数据是否加载完毕 
+                if(curLists.length < this.pageSize){
+                  this.allLoaded = true
+                }
+                if(this.hotLists) {
+                  this.hotLists = this.hotLists.concat(curLists)
+                }else{
+                  //第一次获取数据
+                  this.hotLists = curLists
+                }
+                this.loading = false
+                this.pageNum ++
+            })
+          },
         getDetails(){
             axios.post(url.details,{id}).then( res => {
                 this.details = res.data.data
