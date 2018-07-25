@@ -98,7 +98,7 @@
         }else if(this.provinceValue==-1||this.cityValue==-1||this.districtValue==-1){
           this.errMsg = '请选择所在区域'
         }else if(!address.test(this.address)){
-          this.errMsg = '请填写详细地址'
+          this.errMsg = '请填写合理的地址信息'
         }else{
           this.isError = false
           this.errMsg = ''
